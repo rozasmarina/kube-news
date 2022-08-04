@@ -1,4 +1,4 @@
-# Deployment do Postgre
+#Deployment do PostgreSQL
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,7 +19,7 @@ spec:
             - containerPort: 5432
           env:
           - name: POSTGRES_PASSWORD
-            value: "Kube#123"
+            value: "Nhoc#123"
           - name: POSTGRES_USER
             value: "kubenews"
           - name: POSTGRES_DB
@@ -33,7 +33,7 @@ spec:
   selector:
     app: postgre
   ports:
-  - port: 5432 
+  - port: 5432
     targetPort: 5432
 ---
 apiVersion: apps/v1
@@ -41,31 +41,26 @@ kind: Deployment
 metadata:
   name: kubenews
 spec:
-  replicas: 20
   selector:
     matchLabels:
       app: kubenews
   template:
     metadata:
       labels:
-        app: kubenews  
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "8080"
-        prometheus.io/path: "/metrics"
+        app: kubenews
     spec:
       containers:
-      - name: kubenews
-        image: fabricioveronez/kube-news:11
-        env:
-        - name: DB_DATABASE
-          value: "kubenews"
-        - name: DB_USERNAME
-          value: "kubenews"
-        - name: DB_PASSWORD
-          value: "Kube#123"
-        - name: DB_HOST
-          value: "postgre"      
+        - name: kubenews
+          image: rozasmarina/kube-news:v1
+          env:
+          - name: DB_DATABASE
+            value: "kubenews"
+          - name: DB_USERNAME
+            value: "kubenews"
+          - name: DB_PASSWORD
+            value: "Nhoc#123"
+          - name: DB_HOST
+            value: "postgre"
 ---
 apiVersion: v1
 kind: Service
@@ -78,4 +73,4 @@ spec:
   - port: 80
     targetPort: 8080
     nodePort: 30000
-  type: LoadBalancer
+  type: NodePort
